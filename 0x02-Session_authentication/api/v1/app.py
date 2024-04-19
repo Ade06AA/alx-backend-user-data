@@ -27,6 +27,9 @@ if authType == 'session_auth':
 
 @app.before_request
 def before_every_request():
+    """
+    doc
+    """
     if auth:
         if auth.require_auth(request.path, ['/api/v1/status/',
                                             '/api/v1/unauthorized/',

@@ -20,15 +20,21 @@ if authType == 'auth':
 if authType == 'basic_auth':
     from api.v1.auth.basic_auth import BasicAuth
     auth = BasicAuth()
+
+
 @app.before_request
 def before_every_request():
+    """
+    doc
+    """
     if auth:
-        if auth.require_auth(request.path, ['/api/v1/status/', '/api/v1/unauthorized/', '/api/v1/forbidden/']):
+        if auth.require_auth(request.path, ['/api/v1/status/',
+                                            '/api/v1/unauthorized/',
+                                            '/api/v1/forbidden/']):
             if not auth.authorization_header(request):
                 abort(401)
             if not auth.current_user(request):
                 abort(403)
-
 
 
 @app.errorhandler(404)
