@@ -5,7 +5,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
-from sqlalchemy.exc import NoResultFound, InvalidRequestError
+from sqlalchemy.exc import InvalidRequestError
+from sqlalchemy.orm.exc import NoResultFound
 
 from user import Base, User
 
@@ -32,36 +33,34 @@ class DB:
             self.__session = DBSession()
         return self.__session
 
-    def add_user(self, email, hashed_password) -> User:
+    def add_user(self, email: str, hashed_password) -> User:
         """
         add user
         """
-        user = User(email=email,
+        user: User = User(email=email,
                     hashed_password=hashed_password)
-        session = self._session
-        session.add(user)
-        session.commit()
+        self._session.add(user)
+        self._session.commit()
         return user
 
     def find_user_by(self, **varg):
         """
         filter a user out of a data base
         """
-        session = self._session
         try:
-            user = session.query(User).filter_by(**varg).first()
+            user: User = self._session.query(User).filter_by(**varg).first()
         except InvalidRequestError or TypeError:
             raise InvalidRequestError
         if user is None:
             raise NoResultFound
         return user
 
-    def update_user(self, user_id, **kargs):
+    def update_user(self, user_id: int, **kargs) -> None:
         """
         update user detsils
         """
-        session = self._session
-        user = self.find_user_by(id=user_id)
+        session: Session = self._session
+        user: User = self.find_user_by(id=user_id)
         for i, j in kargs.items():
             if hasattr(user, i):
                 setattr(user, i, j)
