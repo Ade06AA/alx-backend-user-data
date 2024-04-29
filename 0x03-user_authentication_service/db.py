@@ -33,7 +33,7 @@ class DB:
             self.__session = DBSession()
         return self.__session
 
-    def add_user(self, email: str, hashed_password) -> User:
+    def add_user(self, email: str, hashed_password: str) -> User:
         """
         add user
         """
@@ -42,7 +42,7 @@ class DB:
         self._session.commit()
         return user
 
-    def find_user_by(self, **varg):
+    def find_user_by(self, **varg) -> User:
         """
         filter a user out of a data base
         """
