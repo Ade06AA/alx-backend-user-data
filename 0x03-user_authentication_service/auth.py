@@ -45,7 +45,7 @@ class Auth:
         user: User = self._db.add_user(email, _hash_password(password))
         return user
 
-    def valid_login(self, email: str, passwd: str) -> bool:
+    def valid_login(self, email: str, password: str) -> bool:
         """
         check for correct password
         """
@@ -55,7 +55,7 @@ class Auth:
         except Exception as e:
             return False
         if user:
-            return bcrypt.checkpw(passwd.encode('utf-8'),
+            return bcrypt.checkpw(password.encode('utf-8'),
                                   user.hashed_password)
         return False
 
@@ -81,7 +81,10 @@ class Auth:
         user: User = None
         if session_id is None:
             return None
-        user: User = self._db.find_user_by(session_id=session_id)
+        try:
+            user: User = self._db.find_user_by(session_id=session_id)
+        except Exception as e:
+            return None
         return user
 
     def destroy_session(self, user_id: int) -> None:
